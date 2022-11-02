@@ -8,6 +8,7 @@ export default observer(function Home() {
   const store = useLocalObservable(() => PuzzleStore)
   useEffect(() => {
     store.init()
+    console.log(store.word)
     window.addEventListener('keyup', store.handleKeyup)
 
     return () => {
@@ -33,8 +34,6 @@ export default observer(function Home() {
       <button onClick={store.init}>Play Again</button>
     )}
     <Qwerty store={store} />
-    word: {store.word}
-    guesses: {JSON.stringify(store.guesses)}
   </div>
   )
 })
