@@ -8,12 +8,18 @@ export default observer(function Home() {
   const store = useLocalObservable(() => PuzzleStore)
   useEffect(() => {
     store.init()
+    window.addEventListener('keyup', store.handleKeyup)
+
+    return () => {
+      window.removeEventListener('keyup', store.handleKeyup)
+    }
   }, [])
-  return <div className='flex h-screen w-screen flex-col items-center justify-center bg-gray-600'>
+  return (
+  <div className='flex h-screen w-screen flex-col items-center justify-center bg-gray-600'>
     <h1 className='text-6xl font-bold uppercase text-transparent bg-clip-text bg-gradient-to-br from-red-400 to-purple-400'>
       Wordle
     </h1>
-    {new Array(6).fill(0).map((_, i) => (
+    {store.guesses.map((_, i) => (
       <Guess
         key={i}
         word={store.word}
@@ -21,7 +27,14 @@ export default observer(function Home() {
         isGuessed={i < store.currentGuess}
       />
     ))}
-    <h1>won/lost</h1>
-    <Qwerty />
+    {store.won && <h1>You won!</h1>}
+    {store.lost && <h1>You lost!</h1>}
+    {(store.won || store.lost) && (
+      <button onClick={store.init}>Play Again</button>
+    )}
+    <Qwerty store={store} />
+    word: {store.word}
+    guesses: {JSON.stringify(store.guesses)}
   </div>
+  )
 })
